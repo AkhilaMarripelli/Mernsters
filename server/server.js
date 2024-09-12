@@ -150,6 +150,7 @@ app.get('/api/sessions', async (req, res) => {
         const sessionsWithDetails = sessions.map((session) => {
             const mentor = mentorMap[session.email] || {}; // Get mentor details by email
             return {
+                sessionId:session.sessionId,
                 topic: session.topic,
                 date: session.date,
                 startTime: session.startTime,
@@ -168,7 +169,34 @@ app.get('/api/sessions', async (req, res) => {
     }
 });
 
-
+app.post('/api/book-slot', async (req, res) => {
+    try {
+      const { sessionId, email } = req.body;
+  
+      // Find the slot by sessionId
+      const slot = await Slot.findOne({ sessionId });
+  
+      if (!slot) {
+        return res.status(404).json({ message: 'Slot not found' });
+      }
+  
+      // Check if the slot is already booked
+      if (slot.status === 'booked') {
+        return res.status(400).json({ message: 'Slot already booked' });
+      }
+  
+      // Update the slot with mentee's email and change status to 'booked'
+      slot.menteeemail = email; // Store the mentee's email
+      slot.status = 'booked';   // Update the status to 'booked'
+      await slot.save();
+  
+      res.status(200).json({ message: 'Slot booked successfully!' });
+    } catch (error) {
+      console.error('Error booking slot:', error);
+      res.status(500).json({ message: 'Server error' });
+    }
+  });
+  
 // Connect to DB
 mongoose.connect('mongodb://localhost:27017/profilemanagement', { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => {

@@ -31,6 +31,10 @@ const slotSchema = new mongoose.Schema({
         enum: ['booked', 'active', 'completed'],
         default: 'active',
     },
+    menteeemail:{
+        type:String,
+        default:null
+    }
 }, {
     timestamps: true, // Adds createdAt and updatedAt fields
 });
