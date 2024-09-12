@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const app = express();
 const port = process.env.PORT || 5000;
 const Slot = require('./models/slotModel');
+const menteeRoutes = require('./routers/mentee');
 
 // Import routes
 const userRoutes = require('./routers/user');
@@ -117,7 +118,16 @@ app.delete('/api/deletesession/:sessionId', async (req, res) => {
     }
 });
 
-
+app.use('/api/mentee',menteeRoutes)
+app.get('/api/allmentors', async (req, res) => {
+    try {
+        const mentors = await mentors.find(); // Fetch all mentor documents from the database
+        res.status(200).json({ mentors });
+    } catch (error) {
+        console.error('Error fetching mentors:', error);
+        res.status(500).json({ message: 'An error occurred while fetching mentors.' });
+    }
+});
 // Connect to DB
 mongoose.connect('mongodb://localhost:27017/profilemanagement', { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => {

@@ -1,13 +1,14 @@
 const express = require('express');
-//express woutes setup
+// Express routes setup
 const router = express.Router();
-//importing controller
-const {signupMentee,loginMentee} = require('./../controllers/menteeController')
 
-//signup user
-router.post('/signup',signupMentee)
+// Importing controllers
+const { signupUser, loginUser } = require('./../controllers/menteeController');
 
-//login user
-router.post('/login',loginMentee)
+// Signup user route
+router.post('/signup', signupUser);
+
+// Login user route
+router.post('/login', loginUser);
 
 module.exports = router;
