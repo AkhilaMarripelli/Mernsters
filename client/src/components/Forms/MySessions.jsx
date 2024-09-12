@@ -9,6 +9,17 @@ const MySessions = () => {
     const [error, setError] = useState('');
     const [editingSession, setEditingSession] = useState(null);
     const [updatedSession, setUpdatedSession] = useState({});
+    const startEditing = (session) => {
+        setEditingSession(session);
+        setUpdatedSession({
+            topic: session.topic,
+            date: session.date,
+            startTime: session.startTime,
+            endTime: session.endTime,
+            status: session.status
+        });
+    };
+    
 
     useEffect(() => {
         if (user) {
@@ -49,7 +60,7 @@ const MySessions = () => {
 
     const handleUpdate = async (sessionId) => {
         try {
-            const response = await fetch(`/updatesession/${sessionId}?email=' + user.email`, {
+            const response = await fetch(`/api/updatesession/${sessionId}?email=` + user.email, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -58,12 +69,13 @@ const MySessions = () => {
                 body: JSON.stringify(updatedSession)
             });
     
+            const result = await response.json(); // This line will help in getting the JSON result or the error message
+    
             if (response.ok) {
                 fetchSessions(); // Refresh sessions after update
                 setEditingSession(null);
             } else {
-                const error = await response.json();
-                setError(error.message);
+                setError(result.message || 'Failed to update session');
             }
         } catch (err) {
             console.error('Error:', err);
@@ -71,9 +83,11 @@ const MySessions = () => {
         }
     };
     
+    
+    
     const handleDelete = async (sessionId) => {
         try {
-            const response = await fetch(`/deletesession/${sessionId}?email=' + user.email`, {
+            const response = await fetch(`/api/deletesession/${sessionId}?email=${encodeURIComponent(user.email)}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
@@ -81,17 +95,19 @@ const MySessions = () => {
                 }
             });
     
+            const result = await response.json();
+    
             if (response.ok) {
                 fetchSessions(); // Refresh sessions after deletion
             } else {
-                const error = await response.json();
-                setError(error.message);
+                setError(result.message || 'Failed to delete session');
             }
         } catch (err) {
             console.error('Error:', err);
             setError('An error occurred while deleting the session.');
         }
     };
+    
     
     if (loading) return <div className="form-body"><div className="loading">Loading sessions...</div></div>;
     if (error) return <div className="form-body"><div className="error">{error}</div></div>;
@@ -107,20 +123,20 @@ const MySessions = () => {
                         <p>No sessions found.</p>
                     ) : (
                         <div className="sessions-container">
-                            {sessions.map((session) => (
-                                <div key={session.sessionId} className="session-card">
-                                    <h4>{session.topic}</h4>
-                                    <p>Date: {new Date(session.date).toLocaleDateString()}</p>
-                                    <p>Start Time: {session.startTime}</p>
-                                    <p>End Time: {session.endTime}</p>
-                                    <p>Status: {session.status}</p>
-                                    <div className="session-actions">
-                                        <button onClick={() => handleUpdate(session.sessionId)}>Edit</button>
-                                        <button onClick={() => handleDelete(session.sessionId)}>Delete</button>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
+    {sessions.map((session) => (
+        <div key={session.sessionId} className="session-card">
+            <h4>{session.topic}</h4>
+            <p>Date: {new Date(session.date).toLocaleDateString()}</p>
+            <p>Start Time: {session.startTime}</p>
+            <p>End Time: {session.endTime}</p>
+            <p>Status: {session.status}</p>
+            <div className="session-actions">
+                <button onClick={() => startEditing(session)}>Edit</button>
+                <button onClick={() => handleDelete(session.sessionId)}>Delete</button>
+            </div>
+        </div>
+    ))}
+</div>
                     )}
                 </div>
             </div>

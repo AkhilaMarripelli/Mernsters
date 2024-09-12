@@ -3,11 +3,11 @@ const express = require('express');
 const mongoose = require('mongoose');
 const app = express();
 const port = process.env.PORT || 5000;
-const Slot = require('./models/slotModel'); // Adjust the path as needed
+const Slot = require('./models/slotModel');
 
-
+// Import routes
 const userRoutes = require('./routers/user');
-// const slotRoutes = require('./routers/slotRoutes'); // Ensure this matches the exact file name
+// const sessionRoutes = require('./routers/sessionRoutes'); // Ensure this matches your actual file name
 
 // Middleware
 app.use(express.json());
@@ -19,33 +19,34 @@ app.use((req, res, next) => {
 
 // Routes
 app.use('/api/user', userRoutes);
-// app.use('/api/session', sessionRoutes); // Use the correct route for sessions
-// app.use('/api/slot', slotRoutes); // Ensure this matches your slot routes
+// app.use('/api/session', sessionRoutes); // Ensure this matches your session routes
+
+// Save slot
 app.post('/api/saveslot', async (req, res) => {
-    console.log('entered');
     const { date, startTime, endTime, topic, status, email } = req.body;
-    console.log(date, startTime, endTime, topic, status, email )
+
     try {
-      const newSlot = new Slot({
-        date,
-        startTime,
-        endTime,
-        topic,
-        status,
-        email, // Store the mentor ID here
-      });
-  
-      const savedslot=await newSlot.save();
-  
-      res.status(201).json({ success: true, message: 'Slot saved successfully!' });
-      sessionId: savedslot.sessionId
+        const newSlot = new Slot({
+            date,
+            startTime,
+            endTime,
+            topic,
+            status,
+            email, // Store the mentor ID here
+        });
+
+        const savedSlot = await newSlot.save();
+
+        res.status(201).json({ success: true, message: 'Slot saved successfully!', sessionId: savedSlot.sessionId });
     } catch (error) {
-      console.error('Error saving slot:', error);
-      res.status(500).json({ error: 'Error saving slot' });
+        console.error('Error saving slot:', error);
+        res.status(500).json({ error: 'Error saving slot' });
     }
-  });
-  app.get('/api/mysessions', async (req, res) => {
-    const { email } = req.query; // Get mentorId from query parameters
+});
+
+// Get sessions
+app.get('/api/mysessions', async (req, res) => {
+    const { email } = req.query;
 
     try {
         const sessions = await Slot.find({ email });
@@ -55,50 +56,59 @@ app.post('/api/saveslot', async (req, res) => {
         res.status(500).json({ error: 'Error fetching sessions' });
     }
 });
+
 // Update session by ID
-app.put('/updatesession/:sessionId', async (req, res) => {
+app.put('/api/updatesession/:sessionId', async (req, res) => {
+    console.log('entered',req.params)
     const { sessionId } = req.params;
     const updates = req.body;
 
     try {
-        const session = await Slot.findById(sessionId);
-
+        const session = await Slot.findOne({ sessionId });
+        console.log('session',session)
         if (!session) {
             return res.status(404).json({ message: 'Session not found' });
         }
-
+        const {email}=req.query;
         // Ensure the session belongs to the current user
-        if (session.email !== req.user.email) {
+        if (session.email !== email) { // Assuming email is sent in the request body
             return res.status(403).json({ message: 'Unauthorized to update this session' });
         }
 
-        Object.assign(session, updates); // Merge updates with the session object
+        Object.assign(session, updates);
         await session.save();
 
         res.status(200).json({ message: 'Session updated successfully', session });
     } catch (error) {
         console.error('Error updating session:', error);
-        res.status(500).json({ message: 'An error occurred while updating the session.', error: error.message });
+        res.status(500).json({ message: 'An error occurred while updating the session.' });
     }
 });
 
-
-app.delete('/deletesession/:sessionId', async (req, res) => {
+// Delete session by ID
+app.delete('/api/deletesession/:sessionId', async (req, res) => {
+    console.log('entered', req.params);
     const { sessionId } = req.params;
 
     try {
-        const session = await Slot.findById(sessionId);
+        // Find the session by sessionId
+        const session = await Slot.findOne({ sessionId });
+        console.log('session', session);
 
         if (!session) {
             return res.status(404).json({ message: 'Session not found' });
         }
 
+        // Get the email from query parameters
+        const { email } = req.query;
+
         // Ensure the session belongs to the current user
-        if (session.email !== req.user.email) {
+        if (session.email !== email) { // Ensure email is sent in query parameters
             return res.status(403).json({ message: 'Unauthorized to delete this session' });
         }
 
-        await session.remove();
+        // Delete the session
+        await Slot.deleteOne({sessionId });
 
         res.status(200).json({ message: 'Session deleted successfully' });
     } catch (error) {
@@ -107,7 +117,7 @@ app.delete('/deletesession/:sessionId', async (req, res) => {
     }
 });
 
-  
+
 // Connect to DB
 mongoose.connect('mongodb://localhost:27017/profilemanagement', { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => {
