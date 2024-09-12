@@ -9,6 +9,7 @@ const slotSchema = new mongoose.Schema({
     email: {
         type: String,
         required: true,
+        ref: 'Mentor'
     },
     date: {
         type: Date,

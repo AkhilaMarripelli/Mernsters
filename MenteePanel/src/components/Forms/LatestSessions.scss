@@ -1,0 +1,69 @@
+.latest-sessions {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: center; // Center align cards horizontally
+    padding: 20px; // Add padding around the container for better spacing
+  }
+  
+  .session-card {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: transform 0.3s, box-shadow 0.3s;
+    padding: 20px;
+    max-width: 800px; // Increased max width for the card
+    width: 100%; // Make the card responsive to container width
+    position: relative;
+    z-index: 1;
+  
+    &:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    }
+  
+    .mentor-info {
+      margin-bottom: 15px;
+      .mentor-name {
+        font-size: 24px;
+        font-weight: 600;
+        margin-bottom: 5px;
+      }
+      .mentor-bio {
+        font-size: 16px;
+        color: #666;
+        margin-bottom: 5px;
+      }
+      .mentor-expertise {
+        font-size: 14px;
+        color: #888;
+      }
+    }
+  
+    .session-details {
+      p {
+        font-size: 16px;
+        margin-bottom: 10px;
+        strong {
+          font-weight: 600;
+          color: #273239;
+        }
+      }
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .session-card {
+      max-width: 100%; // Full width on smaller screens
+      padding: 15px; // Adjust padding for smaller screens
+    }
+  }
+  
+  @media (max-width: 525px) {
+    .latest-sessions {
+      padding: 10px;
+    }
+  }
+  

@@ -27,6 +27,9 @@ const {user} = useAuthContext()
                 <li>
                   <NavLink to="/allmentors" className='menu-item'>BrowseMentors</NavLink>
                 </li>
+                <li>
+                  <NavLink to="/latestsessions" className='menu-item'>LatestSessions</NavLink>
+                </li>
               </ul>
             </div>
           </div>

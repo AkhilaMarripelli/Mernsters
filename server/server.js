@@ -25,7 +25,7 @@ app.use('/api/user', userRoutes);
 // Save slot
 app.post('/api/saveslot', async (req, res) => {
     const { date, startTime, endTime, topic, status, email } = req.body;
-    
+
     try {
         const newSlot = new Slot({
             date,
@@ -128,6 +128,47 @@ app.get('/api/allmentors', async (req, res) => {
         res.status(500).json({ message: 'An error occurred while fetching mentors.' });
     }
 });
+app.get('/api/sessions', async (req, res) => {
+    try {
+        // Fetch slots with mentor emails
+        const sessions = await Slot.find()
+            .sort({ date: -1 }); // Sort by latest date
+
+        // Extract email addresses from sessions
+        const emails = sessions.map(session => session.email);
+
+        // Fetch mentors based on the extracted emails
+        const mentors = await Mentor.find({ email: { $in: emails } });
+
+        // Create a map for quick lookup of mentor details by email
+        const mentorMap = mentors.reduce((map, mentor) => {
+            map[mentor.email] = mentor;
+            return map;
+        }, {});
+
+        // Map data to include mentor details
+        const sessionsWithDetails = sessions.map((session) => {
+            const mentor = mentorMap[session.email] || {}; // Get mentor details by email
+            return {
+                topic: session.topic,
+                date: session.date,
+                startTime: session.startTime,
+                endTime: session.endTime,
+                status: session.status,
+                name: mentor.name || 'N/A',
+                bio: mentor.profile.bio || 'N/A',
+                expertise: mentor.profile.expertise || []
+            };
+        });
+
+        res.status(200).json(sessionsWithDetails);
+    } catch (error) {
+        console.error('Error fetching sessions:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+
 // Connect to DB
 mongoose.connect('mongodb://localhost:27017/profilemanagement', { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => {
