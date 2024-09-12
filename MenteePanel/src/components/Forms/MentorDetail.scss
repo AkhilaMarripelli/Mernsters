@@ -1,0 +1,73 @@
+/* MentorDetail.scss */
+
+.mentor-detail-container {
+    background: linear-gradient(to right, #f5f7fa, #c3cfe2); /* Gradient background */
+    padding: 20px;
+    min-height: 100vh; /* Ensures the container takes up at least the full viewport height */
+    font-family: 'Arial', sans-serif; /* Default font */
+  }
+  
+  .mentor-info {
+    background: #ffffff; /* White background for the card */
+    border-radius: 12px; /* Rounded corners */
+    padding: 20px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Enhanced shadow for a card effect */
+    margin-bottom: 30px; /* Space between mentor details and sessions list */
+    border: 1px solid #e0e0e0; /* Light border for better separation */
+  }
+  
+  .mentor-info h2 {
+    margin-top: 0;
+    color: #333333; /* Dark text color for better readability */
+    font-size: 2rem; /* Larger font size for emphasis */
+  }
+  
+  .mentor-info p {
+    margin: 10px 0; /* Consistent margin for paragraphs */
+    color: #555555; /* Slightly lighter text color */
+  }
+  
+  .sessions-list {
+    background: #ffffff; /* White background for the sessions list */
+    border-radius: 12px; /* Rounded corners */
+    padding: 20px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Enhanced shadow for a card effect */
+    border: 1px solid #e0e0e0; /* Light border for better separation */
+  }
+  
+  .sessions-list h3 {
+    margin-top: 0;
+    text-align: center; /* Center the heading */
+    color: #007bff; /* Change heading color to a blue shade */
+    font-size: 1.8rem; /* Larger font size for emphasis */
+    border-bottom: 3px solid #007bff; /* Add a thicker border underneath the heading */
+    padding-bottom: 10px; /* Add padding below the heading */
+    margin-bottom: 20px; /* Space between heading and list items */
+    font-weight: bold; /* Make the heading bold */
+  }
+  
+  .sessions-list ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .sessions-list li {
+    border-bottom: 1px solid #e0e0e0; /* Light grey border between items */
+    padding: 15px 0; /* Increased padding for better spacing */
+    color: #333333; /* Dark text color for better readability */
+  }
+  
+  .sessions-list li:last-child {
+    border-bottom: none; /* Remove border from the last item */
+  }
+  
+  .sessions-list li p {
+    margin: 5px 0; /* Consistent margin for paragraph elements */
+  }
+  
+  .error {
+    color: #d9534f; /* Bootstrap error color */
+    font-weight: bold;
+    text-align: center; /* Center align error message */
+  }
+  

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate for navigation
 import './AllMentors.scss'; // Ensure this file contains necessary styles
 import Navbar from './../Navbar/Navbar';
 
@@ -6,6 +7,7 @@ const AllMentors = () => {
     const [mentors, setMentors] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+    const navigate = useNavigate(); // Initialize useNavigate
 
     useEffect(() => {
         const fetchMentors = async () => {
@@ -35,15 +37,18 @@ const AllMentors = () => {
         fetchMentors();
     }, []);
 
+    const handleClick = (email) => {
+        navigate(`/mentor/${email}`); // Navigate to mentor detail page
+    };
+
     const renderMentorCard = (mentor) => {
-        // Accessing fields from the mentor object, accounting for potential nested structures
         const { _id, name, email, profile = {}, location, skills = [], expertise = [] } = mentor;
         const mentorSkills = profile.skills?.length ? profile.skills : skills;
         const mentorExpertise = profile.expertise?.length ? profile.expertise : expertise;
         const mentorLocation = profile.location || location || 'Location not available';
 
         return (
-            <div key={_id} className="mentor-card">
+            <div key={_id} className="mentor-card" onClick={() => handleClick(email)}>
                 <h4>{name}</h4>
                 <p>Email: {email}</p>
                 <p>Skills: {mentorSkills.length ? mentorSkills.join(', ') : 'No skills listed'}</p>

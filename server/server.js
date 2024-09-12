@@ -196,7 +196,25 @@ app.post('/api/book-slot', async (req, res) => {
       res.status(500).json({ message: 'Server error' });
     }
   });
+  app.get('/api/mentor/:email', async (req, res) => {
+    const { email } = req.params;
   
+    try {
+      // Fetch mentor details by email
+      const mentor = await Mentor.findOne({ email }).exec();
+      if (!mentor) {
+        return res.status(404).json({ message: 'Mentor not found' });
+      }
+  
+      // Fetch sessions for the mentor by email
+      const sessions = await Slot.find({ email: email }).exec(); // Assuming mentorEmail field in Session
+  
+      res.status(200).json({ mentor, sessions });
+    } catch (error) {
+      console.error('Error fetching mentor details:', error);
+      res.status(500).json({ message: 'Server error' });
+    }
+  });
 // Connect to DB
 mongoose.connect('mongodb://localhost:27017/profilemanagement', { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => {
