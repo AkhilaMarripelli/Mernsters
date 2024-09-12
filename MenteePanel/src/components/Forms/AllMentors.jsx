@@ -13,28 +13,45 @@ const AllMentors = () => {
                 const response = await fetch('/api/allmentors', {
                     method: 'GET',
                     headers: {
-                        'Content-Type': 'application/json'
-                    }
+                        'Content-Type': 'application/json',
+                    },
                 });
-
                 if (response.ok) {
                     const data = await response.json();
+                    console.log(data);
                     setMentors(data.mentors);
-                    setLoading(false);
                 } else {
                     const error = await response.json();
                     setError(error.message);
-                    setLoading(false);
                 }
             } catch (err) {
                 console.error('Error fetching mentors:', err);
                 setError('An error occurred while fetching mentors.');
+            } finally {
                 setLoading(false);
             }
         };
 
         fetchMentors();
     }, []);
+
+    const renderMentorCard = (mentor) => {
+        // Accessing fields from the mentor object, accounting for potential nested structures
+        const { _id, name, email, profile = {}, location, skills = [], expertise = [] } = mentor;
+        const mentorSkills = profile.skills?.length ? profile.skills : skills;
+        const mentorExpertise = profile.expertise?.length ? profile.expertise : expertise;
+        const mentorLocation = profile.location || location || 'Location not available';
+
+        return (
+            <div key={_id} className="mentor-card">
+                <h4>{name}</h4>
+                <p>Email: {email}</p>
+                <p>Skills: {mentorSkills.length ? mentorSkills.join(', ') : 'No skills listed'}</p>
+                <p>Expertise: {mentorExpertise.length ? mentorExpertise.join(', ') : 'No expertise listed'}</p>
+                <p>Location: {mentorLocation}</p>
+            </div>
+        );
+    };
 
     return (
         <>
@@ -47,18 +64,10 @@ const AllMentors = () => {
                     <div className="all-mentors-inner-body">
                         {loading && <p>Loading mentors...</p>}
                         {error && <p className="error">{error}</p>}
-                        {mentors.length === 0 && !loading && !error && <p>No mentors found.</p>}
+                        {!loading && !error && mentors.length === 0 && <p>No mentors found.</p>}
                         {mentors.length > 0 && (
                             <div className="mentors-container">
-                                {mentors.map((mentor) => (
-                                    <div key={mentor._id} className="mentor-card">
-                                        <h4>{mentor.name}</h4>
-                                        <p>Email: {mentor.email}</p>
-                                        <p>Skills: {mentor.skills.join(', ')}</p>
-                                        <p>Expertise: {mentor.expertise.join(', ')}</p>
-                                        <p>Location: {mentor.location}</p>
-                                    </div>
-                                ))}
+                                {mentors.map(renderMentorCard)}
                             </div>
                         )}
                     </div>

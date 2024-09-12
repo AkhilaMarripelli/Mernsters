@@ -5,7 +5,7 @@ const app = express();
 const port = process.env.PORT || 5000;
 const Slot = require('./models/slotModel');
 const menteeRoutes = require('./routers/mentee');
-
+const Mentor=require('./models/userModel');
 // Import routes
 const userRoutes = require('./routers/user');
 // const sessionRoutes = require('./routers/sessionRoutes'); // Ensure this matches your actual file name
@@ -25,7 +25,7 @@ app.use('/api/user', userRoutes);
 // Save slot
 app.post('/api/saveslot', async (req, res) => {
     const { date, startTime, endTime, topic, status, email } = req.body;
-
+    
     try {
         const newSlot = new Slot({
             date,
@@ -121,7 +121,7 @@ app.delete('/api/deletesession/:sessionId', async (req, res) => {
 app.use('/api/mentee',menteeRoutes)
 app.get('/api/allmentors', async (req, res) => {
     try {
-        const mentors = await mentors.find(); // Fetch all mentor documents from the database
+        const mentors = await Mentor.find(); // Fetch all mentor documents from the database
         res.status(200).json({ mentors });
     } catch (error) {
         console.error('Error fetching mentors:', error);
