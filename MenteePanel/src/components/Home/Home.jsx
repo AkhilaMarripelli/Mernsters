@@ -11,7 +11,6 @@ const Home = () => {
             <Hero />
 
             <main className="container">
-                <Cta />
             </main>
         </>
     )

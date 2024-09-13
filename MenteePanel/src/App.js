@@ -7,6 +7,7 @@ import useAuthContext from './hooks/useAuthContext'
 import AllMentors from './components/Forms/AllMentors'
 import LatestSessions from './components/Forms/LatestSessions'
 import MentorDetail from './components/Forms/MentorDetail'
+import MenteeSessions from './components/Forms/MenteeSessions'
 const App = () => {
   const {user} = useAuthContext()
   return (
@@ -27,6 +28,9 @@ const App = () => {
               <Route 
               path='/allmentors' 
               element={!user ? <Login/> : <AllMentors/>}/>
+              <Route 
+              path='/upcommingsessions' 
+              element={!user ? <Login/> : <MenteeSessions/>}/>
               <Route path="/mentor/:email" element={<MentorDetail />} />
           </Routes>
     </>

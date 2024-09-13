@@ -5,8 +5,10 @@ import Navbar from './../Navbar/Navbar';
 
 const AllMentors = () => {
     const [mentors, setMentors] = useState([]);
+    const [filteredMentors, setFilteredMentors] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+    const [searchQuery, setSearchQuery] = useState('');
     const navigate = useNavigate(); // Initialize useNavigate
 
     useEffect(() => {
@@ -20,8 +22,8 @@ const AllMentors = () => {
                 });
                 if (response.ok) {
                     const data = await response.json();
-                    console.log(data);
                     setMentors(data.mentors);
+                    setFilteredMentors(data.mentors);
                 } else {
                     const error = await response.json();
                     setError(error.message);
@@ -37,8 +39,26 @@ const AllMentors = () => {
         fetchMentors();
     }, []);
 
+    useEffect(() => {
+        const filterMentors = () => {
+            const query = searchQuery.toLowerCase();
+            const filtered = mentors.filter(mentor => {
+                const skills = mentor.profile.skills?.join(' ').toLowerCase() || '';
+                const expertise = mentor.profile.expertise?.join(' ').toLowerCase() || '';
+                return skills.includes(query) || expertise.includes(query);
+            });
+            setFilteredMentors(filtered);
+        };
+
+        filterMentors();
+    }, [searchQuery, mentors]);
+
     const handleClick = (email) => {
         navigate(`/mentor/${email}`); // Navigate to mentor detail page
+    };
+
+    const handleSearchChange = (event) => {
+        setSearchQuery(event.target.value);
     };
 
     const renderMentorCard = (mentor) => {
@@ -48,12 +68,15 @@ const AllMentors = () => {
         const mentorLocation = profile.location || location || 'Location not available';
 
         return (
-            <div key={_id} className="mentor-card" onClick={() => handleClick(email)}>
+            <div key={_id} className="mentor-card">
                 <h4>{name}</h4>
                 <p>Email: {email}</p>
                 <p>Skills: {mentorSkills.length ? mentorSkills.join(', ') : 'No skills listed'}</p>
                 <p>Expertise: {mentorExpertise.length ? mentorExpertise.join(', ') : 'No expertise listed'}</p>
                 <p>Location: {mentorLocation}</p>
+                <button className="visit-button" onClick={() => handleClick(email)}>
+                    Visit Mentor Page
+                </button>
             </div>
         );
     };
@@ -65,14 +88,21 @@ const AllMentors = () => {
                 <div className="all-mentors-box">
                     <div className="all-mentors-header">
                         <h3>All Mentors</h3>
+                        <input
+                            type="text"
+                            className="search-bar"
+                            placeholder="Search by skills or expertise..."
+                            value={searchQuery}
+                            onChange={handleSearchChange}
+                        />
                     </div>
                     <div className="all-mentors-inner-body">
                         {loading && <p>Loading mentors...</p>}
                         {error && <p className="error">{error}</p>}
-                        {!loading && !error && mentors.length === 0 && <p>No mentors found.</p>}
-                        {mentors.length > 0 && (
+                        {!loading && !error && filteredMentors.length === 0 && <p>No mentors found.</p>}
+                        {filteredMentors.length > 0 && (
                             <div className="mentors-container">
-                                {mentors.map(renderMentorCard)}
+                                {filteredMentors.map(renderMentorCard)}
                             </div>
                         )}
                     </div>

@@ -30,6 +30,9 @@ const {user} = useAuthContext()
                 <li>
                   <NavLink to="/latestsessions" className='menu-item'>LatestSessions</NavLink>
                 </li>
+                <li>
+                  <NavLink to="/upcommingsessions" className='menu-item'>UpCommingSessions</NavLink>
+                </li>
               </ul>
             </div>
           </div>

@@ -128,39 +128,42 @@ app.get('/api/allmentors', async (req, res) => {
         res.status(500).json({ message: 'An error occurred while fetching mentors.' });
     }
 });
-app.get('/api/sessions', async (req, res) => {
+app.get('/api/allsessions', async (req, res) => {
     try {
-        // Fetch slots with mentor emails
-        const sessions = await Slot.find()
-            .sort({ date: -1 }); // Sort by latest date
+        const sessions = await Slot.find().sort({ date: -1 });
 
-        // Extract email addresses from sessions
+        // Log sessions to ensure they are being fetched
+        console.log("Fetched sessions:", sessions);
+
         const emails = sessions.map(session => session.email);
-
-        // Fetch mentors based on the extracted emails
         const mentors = await Mentor.find({ email: { $in: emails } });
 
-        // Create a map for quick lookup of mentor details by email
+        // Log mentors to ensure correct fetching
+        console.log("Fetched mentors:", mentors);
+
         const mentorMap = mentors.reduce((map, mentor) => {
             map[mentor.email] = mentor;
             return map;
         }, {});
 
-        // Map data to include mentor details
+        // Map sessions to include mentor details
         const sessionsWithDetails = sessions.map((session) => {
-            const mentor = mentorMap[session.email] || {}; // Get mentor details by email
+            const mentor = mentorMap[session.email] || {};
             return {
-                sessionId:session.sessionId,
+                sessionId: session.sessionId,
                 topic: session.topic,
                 date: session.date,
                 startTime: session.startTime,
                 endTime: session.endTime,
                 status: session.status,
                 name: mentor.name || 'N/A',
-                bio: mentor.profile.bio || 'N/A',
-                expertise: mentor.profile.expertise || []
+                bio: mentor.profile?.bio || 'N/A',
+                expertise: mentor.profile?.expertise || []
             };
         });
+
+        // Log the final session data
+        console.log("Sessions with details:", sessionsWithDetails);
 
         res.status(200).json(sessionsWithDetails);
     } catch (error) {
@@ -169,13 +172,15 @@ app.get('/api/sessions', async (req, res) => {
     }
 });
 
+
 app.post('/api/book-slot', async (req, res) => {
     try {
+        console.log('entered book slot')
       const { sessionId, email } = req.body;
-  
+        console.log(sessionId,email)
       // Find the slot by sessionId
       const slot = await Slot.findOne({ sessionId });
-  
+        console.log(slot)
       if (!slot) {
         return res.status(404).json({ message: 'Slot not found' });
       }
@@ -213,6 +218,33 @@ app.post('/api/book-slot', async (req, res) => {
     } catch (error) {
       console.error('Error fetching mentor details:', error);
       res.status(500).json({ message: 'Server error' });
+    }
+  });
+  // Get sessions for a mentee categorized by status (booked and completed)
+app.get('/api/mentee/:email/sessions', async (req, res) => {
+    const { email } = req.params;
+  
+    try {
+      // Find booked sessions for the mentee
+      const bookedSessions = await Slot.find({
+        email,
+        status: 'booked', // Assuming 'booked' status indicates active sessions
+      });
+  
+      // Find completed sessions for the mentee
+      const completedSessions = await Slot.find({
+        email,
+        status: 'completed', // Assuming 'completed' status indicates finished sessions
+      });
+  
+      // Return the categorized sessions in the response
+      res.json({
+        bookedSessions,
+        completedSessions,
+      });
+    } catch (error) {
+      console.error('Error fetching mentee sessions:', error);
+      res.status(500).json({ message: 'Failed to fetch mentee sessions' });
     }
   });
 // Connect to DB
