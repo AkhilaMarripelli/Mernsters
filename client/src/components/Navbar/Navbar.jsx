@@ -30,6 +30,9 @@ const {user} = useAuthContext()
                 <li>
                   <NavLink to="/viewSlots" className='menu-item'>MySessions</NavLink>
                 </li>
+                <li>
+                  <NavLink to="/viewSlots" className='menu-item'>Join Session</NavLink>
+                </li>
               </ul>
             </div>
           </div>
