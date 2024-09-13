@@ -3,13 +3,13 @@ import { NavLink } from 'react-router-dom'
 import Navbar from './../Navbar/Navbar'
 import heroimg from './../../images/hero.png'
 import './Home.scss'
-
+import MentorSuggestions from '../Forms/MentorSuggestions'
 const Home = () => {
     return (
         <>
             <Navbar />
             <Hero />
-
+            <MentorSuggestions/>
             <main className="container">
             </main>
         </>

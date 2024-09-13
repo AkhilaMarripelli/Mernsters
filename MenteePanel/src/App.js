@@ -8,6 +8,7 @@ import AllMentors from './components/Forms/AllMentors'
 import LatestSessions from './components/Forms/LatestSessions'
 import MentorDetail from './components/Forms/MentorDetail'
 import MenteeSessions from './components/Forms/MenteeSessions'
+import KommunicateChat from './components/Forms/chat'
 const App = () => {
   const {user} = useAuthContext()
   return (
@@ -33,6 +34,7 @@ const App = () => {
               element={!user ? <Login/> : <MenteeSessions/>}/>
               <Route path="/mentor/:email" element={<MentorDetail />} />
           </Routes>
+          <KommunicateChat/>
     </>
   )
 }

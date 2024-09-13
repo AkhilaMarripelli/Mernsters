@@ -6,6 +6,8 @@ import Signup from './pages/Signup'
 import useAuthContext from './hooks/useAuthContext'
 import SaveSlotForm from './components/Forms/SaveSlotForm'
 import MySessions from './components/Forms/MySessions'
+import MentorSessions from './components/Forms/MentorSessions'
+import KommunicateChat from './components/Forms/chat'
 const App = () => {
   const {user} = useAuthContext()
   return (
@@ -23,10 +25,14 @@ const App = () => {
               <Route 
               path='/viewSlots' 
               element={!user ? <Login/> : <MySessions/> }/>
+               <Route 
+              path='/upcommingsessions' 
+              element={!user ? <Login/> : <MentorSessions/> }/>
             <Route 
               path='/signup' 
               element={!user ? <Signup/> : <Navigate to="/"/>}/>
           </Routes>
+          <KommunicateChat/>
     </>
   )
 }

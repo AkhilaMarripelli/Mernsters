@@ -91,7 +91,7 @@ const AllMentors = () => {
                         <input
                             type="text"
                             className="search-bar"
-                            placeholder="Search by skills or expertise..."
+                            placeholder="Search by skills/expertise..."
                             value={searchQuery}
                             onChange={handleSearchChange}
                         />

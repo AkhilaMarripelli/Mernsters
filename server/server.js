@@ -6,6 +6,7 @@ const port = process.env.PORT || 5000;
 const Slot = require('./models/slotModel');
 const menteeRoutes = require('./routers/mentee');
 const Mentor=require('./models/userModel');
+const menteeModel = require('./models/menteeModel');
 // Import routes
 const userRoutes = require('./routers/user');
 // const sessionRoutes = require('./routers/sessionRoutes'); // Ensure this matches your actual file name
@@ -120,6 +121,7 @@ app.delete('/api/deletesession/:sessionId', async (req, res) => {
 
 app.use('/api/mentee',menteeRoutes)
 app.get('/api/allmentors', async (req, res) => {
+    console.log('enterd to all mentors')
     try {
         const mentors = await Mentor.find(); // Fetch all mentor documents from the database
         res.status(200).json({ mentors });
@@ -128,6 +130,24 @@ app.get('/api/allmentors', async (req, res) => {
         res.status(500).json({ message: 'An error occurred while fetching mentors.' });
     }
 });
+// Get mentee data by email
+app.get('api/allmentees/:email', async (req, res) => {
+    console.log('Entered to fetch mentee by email');
+    try {
+        const { email } = req.params;
+        const mentee = await Mentee.findOne({ email });
+
+        if (!mentee) {
+            return res.status(404).json({ message: 'Mentee not found' });
+        }
+
+        res.status(200).json(mentee);
+    } catch (error) {
+        console.error('Error fetching mentee:', error);
+        res.status(500).json({ message: 'An error occurred while fetching the mentee.' });
+    }
+});
+
 app.get('/api/allsessions', async (req, res) => {
     try {
         const sessions = await Slot.find().sort({ date: -1 });
@@ -201,25 +221,19 @@ app.post('/api/book-slot', async (req, res) => {
       res.status(500).json({ message: 'Server error' });
     }
   });
-  app.get('/api/mentor/:email', async (req, res) => {
-    const { email } = req.params;
-  
+  app.get('/api/allmentees/:email', async (req, res) => {
     try {
-      // Fetch mentor details by email
-      const mentor = await Mentor.findOne({ email }).exec();
-      if (!mentor) {
-        return res.status(404).json({ message: 'Mentor not found' });
-      }
-  
-      // Fetch sessions for the mentor by email
-      const sessions = await Slot.find({ email: email }).exec(); // Assuming mentorEmail field in Session
-  
-      res.status(200).json({ mentor, sessions });
+        const email = req.params.email;
+        const mentee = await menteeModel.findOne({ email }); // Fetch the mentee by email
+        if (!mentee) {
+            return res.status(404).json({ message: 'Mentee not found' });
+        }
+        res.status(200).json(mentee); // Respond with the mentee data
     } catch (error) {
-      console.error('Error fetching mentor details:', error);
-      res.status(500).json({ message: 'Server error' });
+        console.error('Error fetching mentee:', error);
+        res.status(500).json({ message: 'An error occurred while fetching mentee.' });
     }
-  });
+});
   // Get sessions for a mentee categorized by status (booked and completed)
 app.get('/api/mentee/:email/sessions', async (req, res) => {
     const { email } = req.params;
@@ -247,6 +261,53 @@ app.get('/api/mentee/:email/sessions', async (req, res) => {
       res.status(500).json({ message: 'Failed to fetch mentee sessions' });
     }
   });
+  app.get('/api/mentor/:email', async (req, res) => {
+    const { email } = req.params;
+  
+    try {
+      // Fetch mentor details by email
+      const mentor = await Mentor.findOne({ email }).exec();
+      if (!mentor) {
+        return res.status(404).json({ message: 'Mentor not found' });
+      }
+  
+      // Fetch sessions for the mentor by email
+      const sessions = await Slot.find({ email: email }).exec(); // Assuming mentorEmail field in Session
+  
+      res.status(200).json({ mentor, sessions });
+    } catch (error) {
+      console.error('Error fetching mentor details:', error);
+      res.status(500).json({ message: 'Server error' });
+    }
+  });
+  app.get('/api/mentor/:email/sessions', async (req, res) => {
+    const { email } = req.params;
+  
+    try {
+      // Find booked sessions for the mentee
+      const bookedSessions = await Slot.find({
+        email,
+        status: 'booked', // Assuming 'booked' status indicates active sessions
+      });
+  
+      // Find completed sessions for the mentee
+      const completedSessions = await Slot.find({
+        email,
+        status: 'completed', // Assuming 'completed' status indicates finished sessions
+      });
+  
+      // Return the categorized sessions in the response
+      res.json({
+        bookedSessions,
+        completedSessions,
+      });
+    } catch (error) {
+      console.error('Error fetching mentee sessions:', error);
+      res.status(500).json({ message: 'Failed to fetch mentee sessions' });
+    }
+  });
+  
+
 // Connect to DB
 mongoose.connect('mongodb://localhost:27017/profilemanagement', { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => {
