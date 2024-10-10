@@ -45,7 +45,7 @@ const Hero = () => {
 
 const Cta = () => {
     return (
-        <h1>Cta</h1>
+        <h1></h1>
     )
 }
 

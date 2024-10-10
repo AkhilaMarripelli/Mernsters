@@ -1,0 +1,157 @@
+/* General Styling */
+.home-container {
+  min-height: 100vh;
+  background-color: white;
+}
+
+.main-content {
+  padding-top: 0;
+}
+
+/* Hero Section */
+.hero-section {
+  position: relative;
+  min-height: 100vh;
+  background-color: white;
+  text-align: center;
+  color: #1a202c;
+}
+
+.hero-text {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 4rem;
+}
+
+.hero-title {
+  font-size: 3rem;
+  font-weight: bold;
+  margin-bottom: 1.5rem;
+}
+
+.hero-description {
+  font-size: 1.25rem;
+  margin-bottom: 2rem;
+  color: #5a67d8;
+}
+
+.action-buttons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.get-started-btn {
+  padding: 0.75rem 2rem;
+  background-color: #5a67d8;
+  color: white;
+  font-size: 1.125rem;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.get-started-btn:hover {
+  background-color: #434190;
+}
+
+.search-form {
+  display: flex;
+  width: 100%;
+  max-width: 400px;
+}
+
+.search-input {
+  flex-grow: 1;
+  padding: 0.75rem;
+  border: 1px solid #cbd5e0;
+  border-radius: 0.375rem 0 0 0.375rem;
+}
+
+.search-btn {
+  padding: 0.75rem 1rem;
+  background-color: #5a67d8;
+  color: white;
+  border-radius: 0 0.375rem 0.375rem 0;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.search-btn:hover {
+  background-color: #434190;
+}
+
+/* Scroll Down Icon */
+.scroll-down-icon {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.icon-bounce {
+  width: 2.5rem;
+  height: 5rem;
+  color: #5a67d8;
+  animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+/* Features Section */
+.features-section {
+  padding: 2.5rem 0;
+  background-color: white;
+}
+
+.section-title {
+  font-size: 2rem;
+  font-weight: bold;
+  text-align: center;
+  color: #1a202c;
+  margin-bottom: 2rem;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+}
+
+@media (min-width: 768px) {
+  .features-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.feature-card {
+  background-color: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.375rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.feature-icon {
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.feature-title {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #1a202c;
+  text-align: center;
+}
+
+.feature-description {
+  text-align: center;
+  color: #4a5568;
+}

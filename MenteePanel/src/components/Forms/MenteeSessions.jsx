@@ -12,6 +12,7 @@ const MenteeSessions = () => {
   useEffect(() => {
     const fetchMenteeSessions = async () => {
       try {
+        console.log('enteres fetch')
         // Use the endpoint structure you mentioned
         const response = await fetch(`/api/mentee/${user.email}/sessions`);
         if (!response.ok) {
@@ -30,7 +31,7 @@ const MenteeSessions = () => {
 
     fetchMenteeSessions();
   }, [user.email]);
-
+  
   // Function to determine if the "Join" button should be enabled
   const isJoinButtonEnabled = (sessionDate) => {
     const sessionStartTime = new Date(sessionDate);
@@ -39,27 +40,10 @@ const MenteeSessions = () => {
     return currentTime >= fiveMinutesBefore && currentTime < sessionStartTime;
   };
 
-  const handleJoinSession = async (sessionId) => {
-    try {
-      const response = await fetch(`/api/join-session`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ sessionId, email: user.email }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to join session');
-      }
-
-      const result = await response.json();
-      console.log(result);
-      alert('Joined session successfully!');
-    } catch (error) {
-      console.error('Error joining session:', error);
-    }
-  };
+  const handleJoinSession = (session) => {
+    const meetingUrl = `./room.html`;
+    window.open(meetingUrl, '_blank');
+};
 
   return (
     <div className="mentee-sessions-container">
@@ -77,13 +61,14 @@ const MenteeSessions = () => {
                 <p><strong>Topic:</strong> {session.topic}</p>
                 <p><strong>Date:</strong> {new Date(session.date).toLocaleDateString()}</p>
                 <p><strong>Time:</strong> {`${session.startTime} - ${session.endTime}`}</p>
-                <button 
+                {/* <button 
                   className="join-button"
                   onClick={() => handleJoinSession(session.sessionId)}
                   disabled={!isJoinButtonEnabled(session.date)}
                 >
                   {isJoinButtonEnabled(session.date) ? 'Join' : 'Join (Available 5 mins before)'}
-                </button>
+                </button> */}
+                <button onClick={() => handleJoinSession(session)}>Join Meeting</button>
               </li>
             ))}
           </ul>

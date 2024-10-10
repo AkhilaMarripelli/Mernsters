@@ -235,19 +235,19 @@ app.post('/api/book-slot', async (req, res) => {
     }
 });
   // Get sessions for a mentee categorized by status (booked and completed)
-app.get('/api/mentee/:email/sessions', async (req, res) => {
-    const { email } = req.params;
-  
+app.get('/api/mentee/:menteeemail/sessions', async (req, res) => {
+    const { menteeemail } = req.params;
+    console.log(menteeemail)
     try {
       // Find booked sessions for the mentee
       const bookedSessions = await Slot.find({
-        email,
+        menteeemail,
         status: 'booked', // Assuming 'booked' status indicates active sessions
       });
-  
+      console.log(bookedSessions)
       // Find completed sessions for the mentee
       const completedSessions = await Slot.find({
-        email,
+        menteeemail,
         status: 'completed', // Assuming 'completed' status indicates finished sessions
       });
   

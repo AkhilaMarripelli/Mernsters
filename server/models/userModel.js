@@ -40,6 +40,7 @@ const userSchema = new Schema({
         endTime: { type: String },
       },
     ],
+    image: { type: String }, // Add this field for the image URL
   },
   createdAt: {
     type: Date,
@@ -60,7 +61,8 @@ userSchema.statics.signup = async function (
   bio,
   skills,
   expertise,
-  location
+  location,
+  image // Add image parameter
 ) {
   // Validation
   if (!name || !email || !username || !password) {
@@ -92,6 +94,7 @@ userSchema.statics.signup = async function (
       skills,
       expertise,
       location,
+      image, // Include image in profile
     },
   });
 

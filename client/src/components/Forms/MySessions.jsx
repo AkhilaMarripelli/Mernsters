@@ -107,7 +107,11 @@ const MySessions = () => {
             setError('An error occurred while deleting the session.');
         }
     };
-    
+    const handleJoinSession = (session) => {
+        const meetingUrl = `./room.html?room=${session.sessionId}`;
+        window.open(meetingUrl, '_blank');
+    };
+        
     
     if (loading) return <div className="form-body"><div className="loading">Loading sessions...</div></div>;
     if (error) return <div className="form-body"><div className="error">{error}</div></div>;
@@ -132,6 +136,7 @@ const MySessions = () => {
             <p>Status: {session.status}</p>
             <div className="session-actions">
                 <button onClick={() => startEditing(session)}>Edit</button>
+                <button onClick={() => handleJoinSession(session)}>Join Meeting</button>
                 <button onClick={() => handleDelete(session.sessionId)}>Delete</button>
             </div>
         </div>
